@@ -10,11 +10,12 @@ public class HelloWorldSelenium {
 	
 	@Test
 	public void hello() {
+		System.setProperty("webdriver.chrome.driver", "drivers/chromedriver.exe");
 		
 		WebDriver browser = new ChromeDriver();
-		System.setProperty("webdriver.chrome.driver", "drivers/chromedriver.exe");
-		browser.navigate().to("htpp://localhost:8080/leiloes");
-		browser.quit();
+		
+		browser.navigate().to("http://localhost:8080/leiloes");
+		//browser.quit();
 		
 		
 		
