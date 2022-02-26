@@ -93,4 +93,14 @@ public class LoginTest {
 	        // fecha o navegador aplicação
 	      
 	    }
+	    
+	    
+	    @Test
+	    public void naoDeveriaAcessarAreaRestrita() {
+	    	  this.browser.navigate().to("http://localhost:8080/leiloes/2");
+	    	  Assert.assertTrue(browser.getCurrentUrl().equals("http://localhost:8080/login"));
+	    	  Assert.assertFalse(browser.getPageSource().contains("Dados do Leilão"));
+		        
+	    	
+	    }
 }
