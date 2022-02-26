@@ -18,7 +18,8 @@ public class PageObject {
 		}
 		
 		
-	
+		this.browser.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS)
+		.pageLoadTimeout(10,  TimeUnit.SECONDS);
 	}
 
 	public void fechar() {
