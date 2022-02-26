@@ -9,6 +9,6 @@ public class LeilaoApplication {
 	// -Dspring.profiles.active=test
 	public static void main(String[] args) {
 		SpringApplication.run(LeilaoApplication.class, args);
-	}
+	} 
 
 }

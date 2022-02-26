@@ -12,38 +12,22 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 public class LoginTest {
 	
-	
-	    private static final String URL_LOGIN = "http://localhost:8080/login";
-		private ChromeDriver browser;
-       
-	    @BeforeAll
-	    //roda uma unica vez antes de todos os outros.
-        public static void beforeAll() {
-	    	
-	    	//seta o path para o selenium
-	        System.setProperty("webdriver.chrome.driver", "drivers/chromedriver.exe");
-
-
-        }
+	    private LoginPage paginaDeLogin;
+	    
+	   
+   
 		@BeforeEach
-		//criamos esse metodo para executar antes de todos os outros
-		
 	    public void beforeEach() {
-	    	
-			
-	        //cria um objeto chromedriver
-	        this.browser = new ChromeDriver();
-	        //acessar o site 
-	        this.browser.navigate().to(URL_LOGIN);
+	       this.paginaDeLogin = new LoginPage();
+	       
 	    	
 	    }
 	   
-		@AfterEach
-		//criamos esse metodo para executar depois de todos os outros
-		
+		@AfterEach	
 	    public void afterEach() {
+		 
+			this.paginaDeLogin.fechar();
 			
-			this.browser.quit();
 	    	
 	    }
 	
@@ -51,20 +35,11 @@ public class LoginTest {
 	    @Test
 	    public void deveriaEfetuarLoginComDadosValidos() {
 	    
-	      
-	       // busca  o id e digita fulano  		
-	        browser.findElement(By.id("username")).sendKeys("fulano");
-	        // busca o id e digita pass
-	        browser.findElement(By.id("password")).sendKeys("pass");
-	        // busca o id login-form e clica em submit
-	        browser.findElement(By.id("login-form")).submit();
-
-	        //usando o metodo getCurrentUrl que busca o url atual valida se é o igual o url passado
-	        Assert.assertFalse(browser.getCurrentUrl().equals(URL_LOGIN));
-	        
-	        // valida se fulano esta logado através do id 
-	        Assert.assertEquals("fulano", browser.findElement(By.id("usuario-logado")).getText());
-	        // fecha o navegador aplicação
+	       paginaDeLogin.preencheFormulario("fulano","pass");
+	       paginaDeLogin.efetuaLogin();
+           Assert.assertFalse(paginaDeLogin.isPaginaLogin());
+	       Assert.assertEquals("fulano", paginaDeLogin.getNomeUsuarioLogado());
+	       
 	        
 	       
 	    }
@@ -74,32 +49,25 @@ public class LoginTest {
 	    
 	    @Test
 	    public void naoDeveriaEfetuarLoginComDadosInvalidos() {
-	    
-	        // busca  o id e digita   		
-	        browser.findElement(By.id("username")).sendKeys("invalido");
-	        // busca o id e digita 
-	        browser.findElement(By.id("password")).sendKeys("12345678");
-	        // busca o id login-form e clica em submit
-	        browser.findElement(By.id("login-form")).submit();
 
-	        //usando o metodo getCurrentUrl que busca o url atual valida se é o igual o url passado
-	        Assert.assertTrue(browser.getCurrentUrl().equals("http://localhost:8080/login?error"));
-	        
-	        // valida se na pagina contem a frase citada
-	        Assert.assertTrue(browser.getPageSource().contains("Usuário e senha inválidos."));
-	        // verifica se a exception é lançada, pois o usuario logado não é visivel nessa pagina.
-	        Assert.assertThrows(NoSuchElementException.class, () -> browser.findElement(By.id("usuario-logado")));
-	       
-	        // fecha o navegador aplicação
+		       paginaDeLogin.preencheFormulario("invalido","12345678");
+		       paginaDeLogin.efetuaLogin();
+
+		       Assert.assertTrue(paginaDeLogin.isPaginaError());
+		       Assert.assertNull(paginaDeLogin.getNomeUsuarioLogado());
+		       Assert.assertTrue(paginaDeLogin.contemTexto("Usuário e senha inválidos."));
 	      
 	    }
 	    
 	    
 	    @Test
 	    public void naoDeveriaAcessarAreaRestrita() {
-	    	  this.browser.navigate().to("http://localhost:8080/leiloes/2");
-	    	  Assert.assertTrue(browser.getCurrentUrl().equals("http://localhost:8080/login"));
-	    	  Assert.assertFalse(browser.getPageSource().contains("Dados do Leilão"));
+	    	 paginaDeLogin.navegaParaPaginadeLances();
+	    	 
+	    	
+	    	
+	    	  Assert.assertTrue(paginaDeLogin.isPaginaLogin());;
+	    	  Assert.assertFalse(paginaDeLogin.contemTexto("Dados do Leilão"));
 		        
 	    	
 	    }
